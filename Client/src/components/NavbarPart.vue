@@ -4,10 +4,8 @@
       <!-- Navbar brand -->
       <a
         class="navbar-brand nav-link"
-        target="_blank"
-        href="https://mdbootstrap.com/docs/standard/"
       >
-        <strong>MDB</strong>
+        <strong >JAGAT</strong>
       </a>
       <button
         class="navbar-toggler"
@@ -23,27 +21,25 @@
       <div class="collapse navbar-collapse" id="navbarExample01">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item active">
-            <a class="nav-link" aria-current="page" href="#intro">Home</a>
+            <RouterLink class="nav-link" aria-current="page" :to="{name: 'home'}">Home</RouterLink>
           </li>
           <li class="nav-item">
-            <a
+            <RouterLink
               class="nav-link"
-              href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA"
+              :to="{name: 'form'}"
               rel="nofollow"
-              target="_blank"
-              >Learn Bootstrap 5</a
-            >
+              >New Journey</RouterLink>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="https://mdbootstrap.com/docs/standard/" target="_blank"
               >Download MDB UI KIT</a
             >
-          </li>
+          </li> -->
         </ul>
 
-        <ul class="navbar-nav d-flex flex-row">
+        <!-- <ul class="navbar-nav d-flex flex-row"> -->
           <!-- Icons -->
-          <li class="nav-item me-3 me-lg-0">
+          <!-- <li class="nav-item me-3 me-lg-0">
             <a
               class="nav-link"
               href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA"
@@ -82,8 +78,8 @@
             >
               <i class="fab fa-github"></i>
             </a>
-          </li>
-        </ul>
+          </li> -->
+        <!-- </ul> -->
       </div>
     </div>
   </nav>
