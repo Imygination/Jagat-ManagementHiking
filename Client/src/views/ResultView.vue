@@ -15,7 +15,7 @@
       <div class="carousel-inner">
         <div class="carousel-item active">
           <video style="min-width: 100%; height: 800px" playsinline autoplay muted loop>
-            <source class="h-100" src="../assets/Raindrops_Videvo.mp4" type="video/mp4" />
+            <source class="h-100" src="https://gemajagat.s3.ap-southeast-2.amazonaws.com/Raindrops_Videvo.mp4" type="video/mp4" />
           </video>
           <div class="mask" style="background-color: rgba(0, 0, 0, 0.4)">
             <div class="d-flex justify-content-center align-items-center h-100">
@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <div class="carousel-item active">
+        <div class="carousel-item">
           <div class="mask" style="background-color: rgba(0, 0, 0, 0.8)">
             <div class="d-flex justify-content-center h-100 pt-5 mt-5">
               <div class="text-white text-center">
