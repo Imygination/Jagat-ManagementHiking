@@ -15,7 +15,7 @@
               <div class="text-white text-center">
                 <h1 class="me-5">READY FOR ADVENTURE</h1>
               </div>
-              <form>
+              <form @submit.prevent="handleShowResult">
                 <!-- 2 column grid layout with text inputs for the first and last names -->
                 <div class="row ps-5">
                   <div class="col mt-5">
@@ -26,6 +26,9 @@
                         id="form6Example1"
                         class="form-control-lg bg-transparent text-white border border-white rounded"
                         style="width: 500px; height: 50px"
+                        name="dest"
+                        required
+                        v-model="destination"
                       />
                     </div>
                   </div>
@@ -37,6 +40,9 @@
                         id="form6Example1"
                         class="form-control-lg bg-transparent text-white border border-white rounded"
                         style="width: 500px; height: 50px"
+                        name="date"
+                        required
+                        v-model="date"
                       />
                     </div>
                   </div>
@@ -49,6 +55,9 @@
                     id="form6Example3"
                     class="form-control text-white border border-white rounded"
                     style="width: 500px; height: 50px"
+                    name="email"
+                    required
+                    v-model="email"
                   />
                 </div>
                 <!-- Submit button -->
@@ -56,6 +65,7 @@
                   type="submit"
                   class="btn btn-secondary btn-block mt-4 ms-5"
                   style="width: 500px; height: 50px"
+                  name="result"
                 >
                   LET'S GO !
                 </button>
@@ -71,7 +81,34 @@
 </template>
 
 <script>
-export default {}
+import { mapActions } from 'pinia'
+import { useIndexStore } from '../stores'
+export default {
+  name: 'FormView',
+  data() {
+    return {
+      destination: '',
+      email: '',
+      date: ''
+    }
+  },
+  computed: {},
+  methods: {
+    ...mapActions(useIndexStore, ['showResult']),
+    async handleShowResult() {
+      try {
+        await this.$router.push({
+          query: { destination: this.destination, email: this.email, date: this.date }
+        })
+        localStorage.destination = this.destination
+        console.log(this.$route.fullPath)
+        this.showResult(this.$route.fullPath)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+}
 </script>
 
 <style>

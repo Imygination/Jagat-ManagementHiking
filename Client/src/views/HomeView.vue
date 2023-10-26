@@ -29,7 +29,6 @@
         </div>
       </div>
       <!-- Inner -->
-
       <!-- Controls -->
       <a class="carousel-control-prev" href="#introCarousel" role="button" data-mdb-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,7 +46,7 @@
 <script>
 import GreetingPart from '../components/GreetingPart.vue'
 export default {
-  components: { GreetingPart }
+  components: { GreetingPart },
 }
 </script>
 

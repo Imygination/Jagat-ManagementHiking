@@ -10,17 +10,38 @@
         <li data-mdb-target="#introCarousel" data-mdb-slide-to="0" class="active"></li>
         <li data-mdb-target="#introCarousel" data-mdb-slide-to="1"></li>
         <li data-mdb-target="#introCarousel" data-mdb-slide-to="2"></li>
+        <li data-mdb-target="#introCarousel" data-mdb-slide-to="3"></li>
+        <li data-mdb-target="#introCarousel" data-mdb-slide-to="4"></li>
       </ol>
       <!-- Inner -->
       <div class="carousel-inner">
         <div class="carousel-item active">
           <video style="min-width: 100%; height: 800px" playsinline autoplay muted loop>
-            <source class="h-100" src="https://gemajagat.s3.ap-southeast-2.amazonaws.com/Raindrops_Videvo.mp4" type="video/mp4" />
+            <source
+              class="h-100"
+              src="https://gemajagat.s3.ap-southeast-2.amazonaws.com/Raindrops_Videvo.mp4"
+              type="video/mp4"
+              v-if="weather == Rain"
+            />
+            <source
+              class="h-100"
+              src="https://gemajagat.s3.ap-southeast-2.amazonaws.com/mixkit-blue-sky-background-as-the-clouds-travel-blown-by-the-26108-medium.mp4"
+              type="video/mp4"
+              v-else
+            />
           </video>
           <div class="mask" style="background-color: rgba(0, 0, 0, 0.4)">
             <div class="d-flex justify-content-center align-items-center h-100">
               <div class="text-white text-center">
-                <h1 class="me-5">THE DAY WILL BE RAINNY</h1>
+                <h1 class="me-3">The Day Will Be {{ weather }}</h1>
+                <h4 class="me-3 mt-5">Download detail for this mountain</h4>
+                <a href="">
+                  <i
+                    @click.prevent="generatePdf"
+                    class="far fa-file-pdf fa-8x pt-1"
+                    style="color: white"
+                  ></i>
+                </a>
               </div>
             </div>
           </div>
@@ -32,6 +53,7 @@
               <div class="text-white text-center">
                 <h1 class="mb-3">CHECK THE BASECAMP LOCATION BELOW</h1>
                 <GoogleMap
+                  v-if="center.lat"
                   api-key="AIzaSyAoLZL2XM0CDngIJ6dii9GmnE4tWE2H7Vc"
                   style="width: 100%; height: 400px"
                   :center="center"
@@ -44,24 +66,16 @@
           </div>
         </div>
 
-        <div class="carousel-item">
+        <div class="carousel-item" v-for="poscamp in pos" :key="poscamp.id">
           <div class="mask" style="background-color: rgba(0, 0, 0, 0.8)">
             <div class="d-flex justify-content-center h-100 pt-5 mt-5">
               <div class="text-white text-center">
-                <h1 class="mb-3">POST 1</h1>
-                <h6 class="pt-4">--- Ketinggian 1500 mdpl ---</h6>
-                <h6>--- Waktu Tempuh 45 menit ---</h6>
+                <h1 class="mb-3">{{ poscamp.posName }}</h1>
+                <h6 class="pt-4">--- Ketinggian {{ poscamp.posMdpl }} mdpl ---</h6>
+                <h6>--- Waktu Tempuh {{ poscamp.time }} ---</h6>
                 <h6 class="pt-4">--- Description ---</h6>
-                <p style="width: 70%; margin-left:15%">
-                  Dari basecamp menuju Pos 1, terdapat dua opsi untuk mencapai Pos 1; trekking
-                  seperti biasa atau pun menggunakan ojeg. Saranku, lebih baik menggunakan ojeg bila
-                  buru-buru hendak berebut lapak untuk mendirikan tenda. Apabila menaiki ojeg, biaya
-                  yang dikenakan per Agustus/September 2017 adalah Rp 20.000 – Rp 25.000 per orang
-                  dengan waktu tempuh sekitar 10-15 menit. Kondisi jalan cukup berbahaya, jadi
-                  jangan lupa meminta pengojeg untuk berhati-hati membawa motornya. Bila ingin
-                  menikmati proses pendakian dari awal sampai akhir murni berjalan kaki, trekking
-                  seperti biasa tentu menjadi opsi yang tepat. Yang pasti, sepanjang perjalanan
-                  masih diselimuti dengan perkebunan dan perumahan warga Kledung.
+                <p style="width: 70%; margin-left: 15%">
+                  {{ poscamp.posDescription }}
                 </p>
               </div>
             </div>
@@ -84,14 +98,59 @@
 </template>
 
 <script>
+import pdfMake from 'pdfmake/build/pdfmake'
+import pdfFonts from 'pdfmake/build/vfs_fonts'
+pdfMake.vfs = pdfFonts.pdfMake.vfs
+import { mapState } from 'pinia'
+import { useIndexStore } from '../stores'
 import { GoogleMap, Marker } from 'vue3-google-map'
 export default {
+  name: 'ResultView',
   // eslint-disable-next-line vue/no-reserved-component-names
   components: { GoogleMap, Marker },
-  setup() {
-    const center = { lat: -7.339404817785096, lng: 110.03084472755053 }
 
-    return { center }
+  computed: {
+    ...mapState(useIndexStore, ['mountain', 'pos', 'weather', 'center'])
+  },
+  methods: {
+    generatePdf() {
+      var docDefinition = {
+        content: [
+          {
+            stack: [
+              `${this.mountain.name}`,
+              { text: `${this.mountain.location}`, style: 'subheader' }
+            ],
+            style: 'header'
+          },
+          {
+            stack: [
+              {
+                fontSize: 15,
+                text: [
+                  'Currently margins for ',
+                  /* the following margin definition doesn't change anything */
+                  { text: 'inlines', margin: 20 },
+                  ' are ignored\n\n'
+                ]
+              },
+              `${this.mountain.description}`
+            ],
+            margin: [0, 20, 0, 0],
+            alignment: 'justify'
+          }
+        ]
+
+        //  `${this.pos}`
+      }
+      pdfMake.createPdf(docDefinition).download()
+    }
+  },
+  created() {
+    localStorage.clear()
+    console.log(this.mountain)
+    console.log(this.pos)
+    console.log(this.weather)
   }
 }
 </script>
@@ -112,7 +171,7 @@ GreetingPart styling */
   background-position: center center;
 }
 .carousel-item:nth-child(2) {
-  background-image: url('https://mdbootstrap.com/img/Photos/Others/images/77.jpg');
+  background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -124,7 +183,25 @@ GreetingPart styling */
   background-position: center center;
 }
 .carousel-item:nth-child(4) {
+  background-image: url('https://mdbootstrap.com/img/Photos/Others/images/78.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+.carousel-item:nth-child(5) {
+  background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+.carousel-item:nth-child(6) {
   background-image: url('https://mdbootstrap.com/img/Photos/Others/images/77.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+.carousel-item:nth-child(7) {
+  background-image: url('https://mdbootstrap.com/img/Photos/Others/images/78.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
